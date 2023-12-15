@@ -3,6 +3,7 @@ package com.example.movieapptmdb.feature.movies.data.mappers
 import com.example.movieapptmdb.feature.movies.data.local.movie.MovieEntity
 import com.example.movieapptmdb.feature.movies.data.remote.movie.dto.MovieDto
 import com.example.movieapptmdb.feature.movies.domain.model.MovieModel
+import java.lang.Exception
 
 fun MovieEntity.toMovie(
     category: String
@@ -22,7 +23,11 @@ fun MovieEntity.toMovie(
         adult = adult,
         original_title = original_title,
         category = category,
-        genre_ids = genre_ids
+        genre_ids = try {
+            genre_ids.split(",").map { it.toInt() }
+        } catch (e: Exception) {
+            listOf(-1, -2)
+        }
     )
 }
 
@@ -44,6 +49,10 @@ fun MovieDto.toMovieEntity(
         id = id ?: -1,
         category = category,
         release_date = release_date ?: "",
-        genre_ids = genre_ids ?: listOf()
+        genre_ids = try {
+            genre_ids?.joinToString(",") ?: "-1,-2"
+        } catch (e: Exception) {
+            "-1, -2"
+        }
     )
 }
